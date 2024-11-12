@@ -1,0 +1,61 @@
+[versions]
+kotlin-ver = "1.9.24"
+coreKtx = "1.10.1"
+junit = "4.13.2"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+appcompat = "1.6.1"
+okhttp-ver = "4.12.0"
+ktor-ver = "2.1.0"
+gson-ver = "2.9.0"
+android-build-tools-ver = "8.1.4"
+ksp-ver = "1.8.10-1.0.9"
+hilt-ver = "2.44"
+room-ver = "2.5.2"
+junitKtx = "1.2.1"
+roomKtx = "2.6.1"
+
+
+[libraries]
+kotlin-stdlib = {group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin-ver" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+
+# hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt-ver" }
+
+#room
+androidx-room-runtime = {group = "androidx.room", name = "room-runtime", version.ref = "room-ver" }
+androidx-room-ktx = {group = "androidx.room", name = "room-ktx", version.ref = "room-ver" }
+androidx-room-compiler = {group = "androidx.room", name = "room-compiler", version.ref = "room-ver" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+# room testing
+androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room-ver" }
+
+# ktor
+ktor-client-android = {group = "io.ktor", name = "ktor-client-android", version.ref = "ktor-ver" }
+ktor-client-serialization = {group = "io.ktor", name = "ktor-client-serialization", version.ref = "ktor-ver" }
+ktor-serialization-kotlinx-json = {group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor-ver" }
+ktor-client-logging-jvm = {group = "io.ktor", name = "ktor-client-logging-jvm", version.ref = "ktor-ver" }
+ktor-client-content-negotiation = {group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor-ver" }
+ktor-serialization-gson = { module = "io.ktor:ktor-serialization-gson", version.ref = "ktor-ver" }
+
+
+# Gson dependency
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version = "gson-ver" }
+
+
+# test
+
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor-ver" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "android-build-tools-ver" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-ver" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp-ver" }
+
