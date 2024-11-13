@@ -10,11 +10,14 @@ import com.example.weatherapp.data.model.WeatherModel
 import com.example.weatherapp.data.remote.IRemoteDataSource
 import com.example.weatherapp.data.remote.ktor.KtorRemoteDataSource
 import com.example.weatherapp.data.remote.model.GetWeatherRequest
-import com.example.weatherapp.domain.usecase.abs.GetWeatherUseCase
+import com.example.weatherapp.domain.usecase.GetCurrentWeatherUseCase
+import com.example.weatherapp.domain.usecase.GetWeatherUseCase
 import com.example.weatherapp.domain.usecase.abs.ISuspendUseCase
+import com.example.weatherapp.presentation.state.WeatherState
 import com.example.weatherapp.presentation.viewmodel.WeatherViewModel
 import com.example.weatherapp.repository.IRepository
 import com.example.weatherapp.repository.WeatherRepository
+import dagger.Component.Factory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,6 +27,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.engine.android.Android
 import io.ktor.serialization.gson.gson
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -44,7 +48,6 @@ class AppModule {
     }
 
     @Provides
-    @Singleton
     fun provideRemoteDatasource(
         client: HttpClient
     ): IRemoteDataSource<WeatherModel> {
@@ -52,7 +55,6 @@ class AppModule {
     }
 
     @Provides
-    @Singleton
     fun provideLocalDatasource(): ILocalDataSource<WeatherModel> {
         return WeatherRoomDataSource()
     }
@@ -77,23 +79,33 @@ class AppModule {
     fun provideWeatherRepository(
         localDS: ILocalDataSource<WeatherModel>,
         remoteDS: IRemoteDataSource<WeatherModel>
-    ): IRepository<WeatherModel> {
+    ): IRepository<List<WeatherModel>> {
         return WeatherRepository(localDS, remoteDS)
     }
 
     @Provides
-    fun provideWeatherViewModel(
-        getWeatherUseCase: ISuspendUseCase<GetWeatherRequest, WeatherModel>
-    ): WeatherViewModel {
-        return WeatherViewModel(
-            getWeatherUseCase = getWeatherUseCase
-        )
+    @Named(GET_WEATHER)
+    fun provideGetWeatherUseCase(
+        repository: IRepository<List<WeatherModel>>
+    ): ISuspendUseCase<Unit, List<WeatherModel>> {
+        return GetWeatherUseCase(repository)
     }
 
     @Provides
-    fun provideWeatherUseCase(
-        repository: IRepository<WeatherModel>
-    ): ISuspendUseCase<GetWeatherRequest, WeatherModel> {
-        return GetWeatherUseCase(repository)
+    @Named(CURRENT_WEATHER)
+    fun provideGetCurrentWeatherUseCase(
+        repository: IRepository<List<WeatherModel>>
+    ): ISuspendUseCase<Unit, List<WeatherModel>> {
+        return GetCurrentWeatherUseCase(repository)
+    }
+
+    @Provides
+    fun provideInitialWeatherState(): WeatherState {
+        return WeatherState.Empty
+    }
+
+    companion object {
+        const val CURRENT_WEATHER = "CURRENT_WEATHER"
+        const val GET_WEATHER = "GET_WEATHER"
     }
 }

@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class WeatherModel(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val placeholder: String
+    val placeholder: String,
 )
