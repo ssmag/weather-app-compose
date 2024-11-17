@@ -1,7 +1,15 @@
+import com.android.build.api.dsl.Packaging
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
+    // adding both kapt and ksp slows down build time,
+    // but this is just for demonstration purposes of showcasing the two.
+    // In order to minimize that, as a future step, I would
+    // use only ksp or only kapt (preferrably ksp for efficiency)
     alias(libs.plugins.ksp)
+    id("kotlin-kapt")
 }
 
 android {
@@ -28,19 +36,44 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.4"
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += setOf("META-INF/LICENSE*.md")
+        }
+    }
+
 }
 
 dependencies {
+    // Dependency Injection
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+
+    ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.hilt.android)
+
+
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
 
     // KTOR
     implementation(libs.ktor.client.android)
@@ -49,9 +82,20 @@ dependencies {
 
     implementation(libs.ktor.client.logging.jvm)
     implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.room.ktx)
+
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.room.ktx)
 
     testImplementation(libs.junit)
+    androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.kotlinx.cotourintes)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.cotourintes)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.androidx.espresso.core)
 }
