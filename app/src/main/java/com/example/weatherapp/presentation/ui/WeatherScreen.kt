@@ -1,6 +1,5 @@
 package com.example.weatherapp.presentation.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,12 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Icon
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.weatherapp.presentation.intent.WeatherIntent
 import com.example.weatherapp.presentation.model.WeatherStateModel
@@ -44,7 +43,6 @@ fun WeatherScreen(
     viewModel: WeatherViewModel,
 ) {
     val state by viewModel.stateModelFlow.collectAsState()
-    val zipCodeInput = rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -52,28 +50,25 @@ fun WeatherScreen(
             .padding(horizontal = 16.dp, vertical = 32.dp)
     ) {
         SearchComponent(
-            zipCodeInput = zipCodeInput,
             viewModel = viewModel
         )
-
         Spacer(modifier = Modifier.height(16.dp))
-
         when (val currentState = state) {
             is WeatherState.Loading -> {
-                LoadingUI()
+                LoadingComponent()
             }
 
             is WeatherState.Success -> {
-                ForecastUI(currentState.data)
+                ForecastComponent(currentState.data)
             }
 
             is WeatherState.Error -> {
-                ErrorUI(currentState.error.localizedMessage)
+                ErrorComponent(currentState.error.localizedMessage)
             }
 
             is WeatherState.Empty -> {
                 // Show empty screen
-                Text(text = "No data available", style = MaterialTheme.typography.labelSmall)
+                EmptyComponent()
             }
         }
     }
@@ -81,12 +76,13 @@ fun WeatherScreen(
 
 @Composable
 fun SearchComponent(
-    zipCodeInput: MutableState<String>,
     viewModel: WeatherViewModel
 ) {
+    val zipCodeInput = rememberSaveable { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
     ) {
         BasicTextField(
             value = zipCodeInput.value,
@@ -100,45 +96,54 @@ fun SearchComponent(
                         viewModel.emitIntent(
                             WeatherIntent.FetchWeather(zipCodeInput.value)
                         )
+                        keyboardController?.hide()
                         true
                     } else {
                         false
                     }
-                },
-            decorationBox = { innerTextField ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    innerTextField()
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "Search",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .clickable {
-                                viewModel.emitIntent(
-                                    WeatherIntent.FetchWeather(zipCodeInput.value)
-                                )
-                            }
+                })
+        Icon(
+            imageVector = Icons.Filled.Search,
+            contentDescription = "Search",
+            tint = Color.Black,
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable {
+                    viewModel.emitIntent(
+                        WeatherIntent.FetchWeather(zipCodeInput.value)
                     )
                 }
-            }
         )
     }
 }
 
 @Composable
-fun ErrorUI(errorMessage: String?) {
-    Text(
-        text = "Error: ${errorMessage ?: "Unknown error"}",
-        style = MaterialTheme.typography.labelSmall
-    )
+fun EmptyComponent() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "No data available",
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+}
+@Composable
+fun ErrorComponent(errorMessage: String?) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Error: ${errorMessage ?: "Unknown error"}",
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
 }
 
 @Composable
-fun ForecastUI(weatherModel: WeatherStateModel) {
+fun ForecastComponent(weatherModel: WeatherStateModel) {
     Column {
         Text(
             text = weatherModel.city,
@@ -191,7 +196,7 @@ fun ForecastUI(weatherModel: WeatherStateModel) {
 }
 
 @Composable
-fun LoadingUI() {
+fun LoadingComponent() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
