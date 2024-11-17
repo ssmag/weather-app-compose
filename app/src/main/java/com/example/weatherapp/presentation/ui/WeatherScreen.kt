@@ -1,5 +1,6 @@
 package com.example.weatherapp.presentation.ui
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Icon
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
@@ -88,13 +90,17 @@ fun SearchComponent(
     Row(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        BasicTextField(
+        TextField(
             value = zipCodeInput.value,
             onValueChange = { zipCodeInput.value = it },
             maxLines = 1,
+            placeholder = {
+                Text(text = "Enter a Zip Code")
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .padding(16.dp)
+                .border(1.dp, Color.Black)
                 .onKeyEvent { keyEvent ->
                     if (keyEvent.nativeKeyEvent.keyCode == Key.Enter.nativeKeyCode) {
                         searchForZipAndHideKeyboard(
@@ -113,6 +119,7 @@ fun SearchComponent(
             tint = Color.Black,
             modifier = Modifier
                 .padding(16.dp)
+                .align(Alignment.CenterVertically)
                 .clickable {
                     searchForZipAndHideKeyboard(
                         viewModel = viewModel,

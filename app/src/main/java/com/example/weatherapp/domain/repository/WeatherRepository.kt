@@ -11,6 +11,8 @@ class WeatherRepository @Inject constructor(
 ) {
 
     // Would like to wrap the response in a success/failure wrapper
+    // this way when we get an error for invalid input,
+    // or a network error we can propagate it in a clean way
     suspend fun getWeatherForecastForZip(zipCode: String): WeatherResponseModel {
         return remoteDS.getForecast(zipCode)
     }
