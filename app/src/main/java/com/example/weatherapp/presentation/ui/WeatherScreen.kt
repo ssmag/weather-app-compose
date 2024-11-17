@@ -34,12 +34,13 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import com.example.weatherapp.R
 import com.example.weatherapp.presentation.intent.WeatherIntent
 import com.example.weatherapp.presentation.model.WeatherStateModel
 import com.example.weatherapp.presentation.state.WeatherState
 import com.example.weatherapp.presentation.viewmodel.WeatherViewModel
-
 
 @Composable
 fun WeatherScreen(
@@ -95,7 +96,7 @@ fun SearchComponent(
             onValueChange = { zipCodeInput.value = it },
             maxLines = 1,
             placeholder = {
-                Text(text = "Enter a Zip Code")
+                Text(text = stringResource(R.string.zip_code_hint))
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier
@@ -115,7 +116,7 @@ fun SearchComponent(
                 })
         Icon(
             imageVector = Icons.Filled.Search,
-            contentDescription = "Search",
+            contentDescription = stringResource(R.string.search_button_content_desc),
             tint = Color.Black,
             modifier = Modifier
                 .padding(16.dp)
@@ -138,7 +139,7 @@ fun EmptyComponent() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "No data available",
+            text = stringResource(R.string.no_data_string),
             style = MaterialTheme.typography.labelSmall
         )
     }
@@ -150,7 +151,10 @@ fun ErrorComponent(errorMessage: String?) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Error: ${errorMessage ?: "Unknown error"}",
+            text = stringResource(
+                R.string.error_prompt,
+                errorMessage ?: stringResource(R.string.unknown_error_message)
+            ),
             style = MaterialTheme.typography.labelSmall
         )
     }
@@ -165,7 +169,7 @@ fun ForecastComponent(
 ) {
     Column {
         Text(
-            text = "${weatherModel.city}, ${weatherModel.country}",
+            text = stringResource(R.string.location_format, weatherModel.city, weatherModel.country),
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -192,6 +196,7 @@ fun ForecastComponent(
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Spacer(modifier = Modifier.height(4.dp))
+                        // Would want to store formats into string resources for all these fields
                         Text(
                             text = "Wind: ${dayOfForecast.wind.speed} mph",
                             style = MaterialTheme.typography.bodyMedium
@@ -212,12 +217,9 @@ fun ForecastComponent(
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Spacer(modifier = Modifier.height(24.dp))
-
                     }
                 }
             }
-
-
         }
     }
 }

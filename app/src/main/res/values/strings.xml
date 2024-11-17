@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string name="zip_code_hint">Enter a Zip Code</string>
+    <string name="search_button_content_desc">Search</string>
+    <string name="no_data_string">No data available</string>
+    <string name="error_prompt">Error: %1$s</string>
+    <string name="unknown_error_message">Unknown error</string>
+    <string name="location_format">%1$s, %2$s</string>
+    <string name="wind_format">Wind: %1$s mph</string>
 </resources>
