@@ -3,7 +3,7 @@ package com.example.weatherapp.data.remote.ktor
 import com.example.weatherapp.data.remote.model.RequestMethod
 import com.example.weatherapp.data.remote.model.RequestModel
 import com.example.weatherapp.data.remote.model.ForecastRequest
-import com.example.weatherapp.data.remote.model.response.weather.WeatherModel
+import com.example.weatherapp.data.remote.model.response.weather.WeatherResponseModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
@@ -19,15 +19,15 @@ class KtorRemoteDataSource @Inject constructor(
     private val client: HttpClient
 ) {
 
-    suspend fun getForecast(zipCode: String): WeatherModel {
-        return makeRequest<WeatherModel>(
+    suspend fun getForecast(zipCode: String): WeatherResponseModel {
+        return makeRequest<WeatherResponseModel>(
             requestModel = ForecastRequest(
                 queryParams = mapOf(ZIP_KEY to zipCode),
             )
         )
     }
 
-    fun getForecastFlow(zipCode: String): Flow<WeatherModel?> = flow { getForecast(zipCode) }
+    fun getForecastFlow(zipCode: String): Flow<WeatherResponseModel?> = flow { getForecast(zipCode) }
 
 
     private suspend inline fun <reified T> makeRequest(requestModel: RequestModel): T {

@@ -2,7 +2,7 @@ package com.example.weatherapp.data.remote.model.response.weather
 
 import com.google.gson.annotations.SerializedName
 
-data class WeatherModel(
+data class WeatherResponseModel(
 
 	@SerializedName("city")
 	val city: City? = null,
@@ -17,7 +17,7 @@ data class WeatherModel(
 	val message: Int? = null,
 
 	@SerializedName("list")
-	val list: List<DayOfForecast?>? = null
+	val forecastList: List<DayOfForecast?>? = null
 )
 
 data class Coord(
@@ -35,10 +35,10 @@ data class Wind(
 	val deg: Int? = null,
 
 	@SerializedName("speed")
-	val speed: Any? = null,
+	val speed: Double? = null,
 
 	@SerializedName("gust")
-	val gust: Any? = null
+	val gust: Double? = null
 )
 
 data class Clouds(
@@ -98,16 +98,16 @@ data class City(
 data class Main(
 
 	@SerializedName("temp")
-	val temp: Any? = null,
+	val temp: Double? = null,
 
 	@SerializedName("temp_min")
-	val tempMin: Any? = null,
+	val tempMin: Double? = null,
 
 	@SerializedName("grnd_level")
 	val grndLevel: Int? = null,
 
 	@SerializedName("temp_kf")
-	val tempKf: Any? = null,
+	val tempKf: Double? = null,
 
 	@SerializedName("humidity")
 	val humidity: Int? = null,
@@ -119,10 +119,10 @@ data class Main(
 	val seaLevel: Int? = null,
 
 	@SerializedName("feels_like")
-	val feelsLike: Any? = null,
+	val feelsLike: Double? = null,
 
 	@SerializedName("temp_max")
-	val tempMax: Any? = null
+	val tempMax: Double? = null
 )
 
 data class DayOfForecast(

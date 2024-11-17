@@ -6,6 +6,7 @@ import com.example.weatherapp.domain.repository.WeatherRepository
 import com.example.weatherapp.presentation.action.WeatherAction.*
 import com.example.weatherapp.presentation.action.WeatherAction
 import com.example.weatherapp.presentation.intent.WeatherIntent
+import com.example.weatherapp.presentation.mapper.WeatherMapper
 import com.example.weatherapp.presentation.state.WeatherState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,8 @@ class WeatherViewModel @Inject constructor(
         updateState(WeatherState.Loading)
         try {
             val weatherData = repo.getWeatherForecastForZip(zipCode)
-            updateState(WeatherState.Success(weatherData))
+            val weatherState = WeatherMapper.fromResponseToStateModel(weatherData)
+            updateState(WeatherState.Success(weatherState))
             Log.d(TAG, ":: Successful weatherdata: $weatherData")
         } catch (e: Exception) {
             Log.e(TAG, ":: Error: $e")
