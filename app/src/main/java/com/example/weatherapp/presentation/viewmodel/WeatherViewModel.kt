@@ -10,7 +10,7 @@ import com.example.weatherapp.presentation.mapper.WeatherMapper
 import com.example.weatherapp.presentation.state.WeatherState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,10 +22,9 @@ class WeatherViewModel @Inject constructor(
     initialState: WeatherState = WeatherState.Empty
 ): BaseMVIViewModel<WeatherIntent, WeatherState, WeatherAction>(initialState = initialState) {
 
-    private val myZip = "80201"
     init {
         viewModelScope.launch {
-            getWeatherData(myZip)
+            processIntent(intentFlow)
         }
     }
 
@@ -42,7 +41,7 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    override fun processIntent(intent: Flow<WeatherIntent>) {
+    override fun processIntent(intent: StateFlow<WeatherIntent?>) {
         viewModelScope.launch(Dispatchers.IO) {
             intent.collect {
                 when (it) {
@@ -51,6 +50,9 @@ class WeatherViewModel @Inject constructor(
                     }
                     is WeatherIntent.RefreshWeather -> {
                         handleAction(RefreshData)
+                    }
+                    null -> {
+                        // do nothing
                     }
                 }
             }

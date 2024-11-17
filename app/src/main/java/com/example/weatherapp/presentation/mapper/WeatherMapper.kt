@@ -12,7 +12,6 @@ import java.util.Locale
 object WeatherMapper {
 
     fun fromResponseToStateModel(response: WeatherResponseModel): WeatherStateModel {
-        val city = response.city?.name
         return WeatherStateModel(
             city = response.city?.name ?: "",
             forecastList = response.forecastList?.map { forecastItem ->
