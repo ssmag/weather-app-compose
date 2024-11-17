@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName
 @Immutable
 data class WeatherStateModel(
     val city: String,
+    val country: String,
     val searchQuery: String= "",
     val forecastList: List<DayOfForecastModel>? = emptyList()
 )

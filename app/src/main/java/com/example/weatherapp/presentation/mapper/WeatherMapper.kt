@@ -14,6 +14,7 @@ object WeatherMapper {
     fun fromResponseToStateModel(response: WeatherResponseModel): WeatherStateModel {
         return WeatherStateModel(
             city = response.city?.name ?: "",
+            country = response.city?.country ?: "",
             forecastList = response.forecastList?.map { forecastItem ->
                 DayOfForecastModel(
                     mainWeather = forecastItem?.weather?.first()?.main ?: "",
@@ -28,7 +29,7 @@ object WeatherMapper {
                         tempMin = forecastItem?.main?.tempMin,
                         tempMax = forecastItem?.main?.tempMax
                     ),
-                    date = forecastItem?.dt?.toDateString() ?: "",
+                    date = forecastItem?.dtTxt.toFormattedDate(),
                     humidityPercentage = forecastItem?.main?.humidity ?: 0
                 )
             }
@@ -36,10 +37,11 @@ object WeatherMapper {
 
     }
 
-    // Converts to a human readable date string
-    private fun Int.toDateString(): String {
-        val date = Date(this.toLong())
-        val format = SimpleDateFormat("EEEE, MMM dd", Locale.getDefault())
-        return format.format(date)
+    private fun String?.toFormattedDate(): String {
+        if (this == null) return ""
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("EEEE, MMM dd", Locale.getDefault())
+        val date: Date? = inputFormat.parse(this)
+        return if (date != null) outputFormat.format(date) else ""
     }
 }

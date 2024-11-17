@@ -31,10 +31,17 @@ class WeatherViewModel @Inject constructor(
     private fun getWeatherData(zipCode: String) = viewModelScope.launch(Dispatchers.IO) {
         updateState(WeatherState.Loading)
         try {
-            val weatherData = repo.getWeatherForecastForZip(zipCode)
-            val weatherState = WeatherMapper.fromResponseToStateModel(weatherData)
-            updateState(WeatherState.Success(weatherState))
+            val weatherData =
+                repo.getWeatherForecastForZip(zipCode)
             Log.d(TAG, ":: Successful weatherdata: $weatherData")
+            val filteredForecast =
+                weatherData.forecastList?.filter {
+                    it?.dtTxt?.contains("21:00:00") == true
+                }
+            val weatherDataFiltered = weatherData
+                .copy(forecastList = filteredForecast)
+            val weatherState = WeatherMapper.fromResponseToStateModel(weatherDataFiltered)
+            updateState(WeatherState.Success(weatherState))
         } catch (e: Exception) {
             Log.e(TAG, ":: Error: $e")
             updateState(WeatherState.Error(e))

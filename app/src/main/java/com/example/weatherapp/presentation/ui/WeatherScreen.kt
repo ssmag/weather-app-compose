@@ -146,13 +146,11 @@ fun ErrorComponent(errorMessage: String?) {
 fun ForecastComponent(weatherModel: WeatherStateModel) {
     Column {
         Text(
-            text = weatherModel.city,
+            text = "${weatherModel.city}, ${weatherModel.country}",
             style = MaterialTheme.typography.headlineMedium
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn {
             weatherModel.forecastList?.forEach { dayOfForecast ->
