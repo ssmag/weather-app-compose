@@ -1,13 +1,12 @@
 package com.example.weatherapp.presentation.model
 
 import androidx.compose.runtime.Immutable
-import com.google.gson.annotations.SerializedName
 
 @Immutable
 data class WeatherStateModel(
     val city: String,
     val country: String,
-    val searchQuery: String= "",
+    val searchQuery: String = "",
     val forecastList: List<DayOfForecastModel>? = emptyList()
 )
 
@@ -27,8 +26,8 @@ data class WindModel(
 )
 
 data class TemperatureDataModel(
-    val temp: Double? = null,
-    val feelsLike: Double? = null,
-    val tempMin: Double? = null,
-    val tempMax: Double? = null,
+    val temp: String? = null,
+    val feelsLike: String? = null,
+    val tempMin: String? = null,
+    val tempMax: String? = null,
 )

@@ -67,6 +67,8 @@ class KtorRemoteDataSource @Inject constructor(
     }
 
     companion object {
+        // Would rather store API key in a secure location, such as a keystore
+        // but passing here for simplicity's sake
         private const val API_SECRET_KEY = "appid"
         private const val API_SECRET_VALUE = "1d5608c08a64d6322cae078afa472927"
         private const val ZIP_KEY = "zip"

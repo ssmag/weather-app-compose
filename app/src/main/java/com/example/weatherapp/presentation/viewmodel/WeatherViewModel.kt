@@ -55,8 +55,8 @@ class WeatherViewModel @Inject constructor(
                     is WeatherIntent.FetchWeather -> {
                         handleAction(LoadData(it.zipCode))
                     }
-                    is WeatherIntent.RefreshWeather -> {
-                        handleAction(RefreshData)
+                    is WeatherIntent.GoToWeatherDetails -> {
+                        handleAction(NavigateToWeatherDetails(it.date))
                     }
                     null -> {
                         // do nothing
@@ -72,8 +72,8 @@ class WeatherViewModel @Inject constructor(
                 is LoadData -> {
                     getWeatherData(uiAction.zipCode)
                 }
-                RefreshData -> {
-                    // do something
+                is NavigateToWeatherDetails -> {
+//                    goToWeatherDetailsScreen(uiAction.date)
                 }
             }
         }

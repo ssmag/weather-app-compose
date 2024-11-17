@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.weatherapp.presentation.intent.WeatherIntent
 import com.example.weatherapp.presentation.model.WeatherStateModel
@@ -59,7 +60,10 @@ fun WeatherScreen(
             }
 
             is WeatherState.Success -> {
-                ForecastComponent(currentState.data)
+                ForecastComponent(
+                    viewModel = viewModel,
+                    weatherModel = currentState.data
+                )
             }
 
             is WeatherState.Error -> {
@@ -93,10 +97,11 @@ fun SearchComponent(
                 .padding(16.dp)
                 .onKeyEvent { keyEvent ->
                     if (keyEvent.nativeKeyEvent.keyCode == Key.Enter.nativeKeyCode) {
-                        viewModel.emitIntent(
-                            WeatherIntent.FetchWeather(zipCodeInput.value)
+                        searchForZipAndHideKeyboard(
+                            viewModel = viewModel,
+                            keyboardController = keyboardController,
+                            zipCode = zipCodeInput.value,
                         )
-                        keyboardController?.hide()
                         true
                     } else {
                         false
@@ -109,8 +114,10 @@ fun SearchComponent(
             modifier = Modifier
                 .padding(16.dp)
                 .clickable {
-                    viewModel.emitIntent(
-                        WeatherIntent.FetchWeather(zipCodeInput.value)
+                    searchForZipAndHideKeyboard(
+                        viewModel = viewModel,
+                        keyboardController = keyboardController,
+                        zipCode = zipCodeInput.value,
                     )
                 }
         )
@@ -143,7 +150,12 @@ fun ErrorComponent(errorMessage: String?) {
 }
 
 @Composable
-fun ForecastComponent(weatherModel: WeatherStateModel) {
+fun ForecastComponent(
+    // would rather pass an event emitter rather than the whole ViewModel.
+    // Would need to do some rearchitecting
+    viewModel: WeatherViewModel,
+    weatherModel: WeatherStateModel,
+) {
     Column {
         Text(
             text = "${weatherModel.city}, ${weatherModel.country}",
@@ -155,36 +167,46 @@ fun ForecastComponent(weatherModel: WeatherStateModel) {
         LazyColumn {
             weatherModel.forecastList?.forEach { dayOfForecast ->
                 item {
-                    Text(
-                        text = dayOfForecast.date,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = dayOfForecast.mainWeather,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Wind: ${dayOfForecast.wind.speed} mph",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Temp: ${dayOfForecast.tempData.temp}°F",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Feels like: ${dayOfForecast.tempData.feelsLike}°F",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Humidity: ${dayOfForecast.humidityPercentage}%",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Column(
+                        modifier = Modifier
+                            .clickable {
+                                viewModel.emitIntent(
+                                    WeatherIntent.GoToWeatherDetails(dayOfForecast.date)
+                                )
+                            }
+                    ) {
+                        Text(
+                            text = dayOfForecast.date,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = dayOfForecast.mainWeather,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Wind: ${dayOfForecast.wind.speed} mph",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Temp: ${dayOfForecast.tempData.temp}°F",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Feels like: ${dayOfForecast.tempData.feelsLike}°F",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Humidity: ${dayOfForecast.humidityPercentage}%",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                    }
                 }
             }
 
@@ -203,3 +225,13 @@ fun LoadingComponent() {
     }
 }
 
+private fun searchForZipAndHideKeyboard(
+    viewModel: WeatherViewModel,
+    keyboardController: SoftwareKeyboardController?,
+    zipCode: String,
+) {
+    viewModel.emitIntent(
+        WeatherIntent.FetchWeather(zipCode)
+    )
+    keyboardController?.hide()
+}

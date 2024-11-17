@@ -2,6 +2,7 @@ package com.example.weatherapp.data.remote.model.response.weather
 
 import com.google.gson.annotations.SerializedName
 
+// Would probably break this into separate files for better organization
 data class WeatherResponseModel(
 
 	@SerializedName("city")
